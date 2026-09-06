@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TodoLite - Sổ tay ghi chú việc cần làm siêu nhẹ, chạy System Tray, luôn hiển thị trên cùng (Always on Top).">
+  <title>TodoLite — Sổ Tay Việc Cần Làm</title>
+
+  <!-- Google Fonts: Inter & Caveat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/notebook.css">
+  <link rel="stylesheet" href="css/todo.css">
+  <link rel="stylesheet" href="css/search.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/minimalist.css">
+</head>
+<body>
+  <main id="app-window" class="is-pinned">
+    <!-- 1. Custom Titlebar with Always-on-Top Pin & Window Controls -->
+    <header class="app-titlebar" id="app-titlebar" data-tauri-drag-region>
+      <div class="titlebar-brand" data-tauri-drag-region>
+        <span class="notebook-spine-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
+            <path d="M6 6h10"></path>
+            <path d="M6 10h10"></path>
+          </svg>
+        </span>
+        <h1 class="app-title">TodoLite</h1>
+        <button id="btn-app-info" class="btn-info-icon" title="Hướng dẫn sử dụng" aria-label="Hướng dẫn sử dụng">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+        </button>
+        <button id="btn-toggle-style" class="app-badge" title="Đổi phong cách: Glassmorphism / Minimalist" aria-label="Đổi phong cách giao diện">Glass</button>
+      </div>
+
+      <div class="titlebar-actions">
+        <!-- Always On Top (Pin) Button -->
+        <button id="btn-pin-always-on-top" class="action-btn btn-pin active" data-tooltip="Ghim: Đang luôn hiển thị trên cùng" aria-label="Ghim trên cùng">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/>
+          </svg>
+        </button>
+
+        <!-- Theme Toggle Button -->
+        <button id="btn-toggle-theme" class="action-btn btn-theme" data-tooltip="Chuyển giao diện" aria-label="Chuyển theme">
+          <svg id="theme-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <!-- Minimize Window -->
+        <button id="btn-minimize" class="action-btn btn-minimize" data-tooltip="Thu nhỏ" aria-label="Thu nhỏ">
+          <svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+
+        <!-- Close / Hide to Tray -->
+        <button id="btn-close" class="action-btn btn-close" data-tooltip="Ẩn xuống khay hệ thống" aria-label="Đóng">
+          <svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- 2. Tab Navigation (Windows Explorer / Chrome Style) -->
+    <nav class="tab-navigation" aria-label="Danh sách tab">
+      <div id="tabs-list" class="tabs-list">
+        <!-- Dynamically populated tabs -->
+      </div>
+      <button id="btn-add-tab" class="tab-add-btn" title="Thêm tab mới" aria-label="Thêm tab">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+    </nav>
+
+    <!-- 3. Notebook Ruled Page Body -->
+    <section class="notebook-container">
+      <!-- Sub-Toolbar (Active tab label + Search button) -->
+      <div class="sub-toolbar">
+        <div class="toolbar-left">
+          <span id="current-tab-title" class="toolbar-label">Công việc</span>
+        </div>
+        <div class="toolbar-right">
+          <button id="btn-tool-search" class="tool-icon-btn" title="Tìm kiếm (Ctrl+F)" aria-label="Tìm kiếm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Todo List Scroll View -->
+      <div class="todo-scroll-area">
+        <div id="todos-container" class="todos-container">
+          <!-- Dynamically populated todos -->
+        </div>
+
+        <!-- Empty State View -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+          <div class="empty-state-icon-wrapper">
+            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11l3 3L22 4"></path>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+          </div>
+          <div class="empty-state-title">Chưa có công việc nào!</div>
+          <p class="empty-state-subtitle">Nhập việc cần làm vào ô bên dưới rồi nhấn Enter để bắt đầu ngày làm việc hiệu quả ✨</p>
+        </div>
+      </div>
+
+      <!-- Search Overlay Modal -->
+      <div id="search-overlay" class="search-overlay">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Tìm kiếm việc cần làm trên tất cả các tab...">
+          <button id="btn-search-clear" class="search-clear-btn" title="Xóa nội dung" aria-label="Xóa nội dung">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          <button id="btn-search-close" class="search-close-btn" title="Đóng tìm kiếm (Esc)" aria-label="Đóng tìm kiếm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div id="search-results" class="search-results">
+          <!-- Dynamic Search Results -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Quick Input Footer -->
+    <footer class="quick-input-bar">
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          id="todo-input" 
+          class="todo-text-input" 
+          placeholder="Thêm việc cần làm mới... (tối đa 200 chữ)"
+          autocomplete="off"
+          maxlength="200"
+        />
+        <div class="input-controls">
+          <!-- Character Counter (Max 200 chars) -->
+          <span id="char-counter" class="char-counter" title="Tối đa 200 chữ">0/200</span>
+          <!-- Priority Picker Button -->
+          <button id="btn-picker-priority" class="priority-picker-btn" title="Gán mức độ ưu tiên" aria-label="Mức độ ưu tiên">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="12" r="6"/>
+            </svg>
+          </button>
+          <!-- Date Picker Button -->
+          <button id="btn-picker-date" class="date-picker-btn" title="Đặt hạn chót" aria-label="Hạn chót">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Add Todo Button -->
+      <button id="btn-add-todo" class="btn-add-todo" title="Thêm việc cần làm" aria-label="Thêm việc">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+    </footer>
+
+    <!-- 5. Deadline Picker Popover Modal -->
+    <div id="deadline-popover-backdrop" class="deadline-popover-backdrop">
+      <div class="deadline-popover" role="dialog" aria-modal="true" aria-label="Chọn hạn chót công việc">
+        <div class="deadline-header">
+          <span class="deadline-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Chọn Mốc Thời Gian Hạn Chót
+          </span>
+          <button id="btn-close-deadline" class="deadline-close-btn" title="Đóng">
+            <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <span class="deadline-presets-label">Mốc gợi ý nhanh:</span>
+        <div class="deadline-presets-grid">
+          <button type="button" class="preset-chip" data-preset="today-18">
+            <span>🕒 Hôm nay</span>
+            <span class="preset-time">18:00</span>
+          </button>
+          <button type="button" class="preset-chip" data-preset="today-21">
+            <span>🌙 Tối nay</span>
+            <span class="preset-time">21:00</span>
+          </button>
+          <button type="button" class="preset-chip" data-preset="tomorrow-09">
+            <span>☀️ Sáng mai</span>
+            <span class="preset-time">09:00</span>
+          </button>
+          <button type="button" class="preset-chip" data-preset="tomorrow-18">
+            <span>📅 Chiều mai</span>
+            <span class="preset-time">18:00</span>
+          </button>
+          <button type="button" class="preset-chip" data-preset="weekend">
+            <span>🗓️ Cuối tuần</span>
+            <span class="preset-time">T7 18:00</span>
+          </button>
+          <button type="button" class="preset-chip" data-preset="next-week">
+            <span>📆 Đầu tuần tới</span>
+            <span class="preset-time">T2 09:00</span>
+          </button>
+        </div>
+
+        <div class="custom-datetime-section">
+          <span class="deadline-presets-label">Hoặc chọn ngày giờ cụ thể:</span>
+          <div class="custom-datetime-inputs">
+            <input type="date" id="deadline-date-input" class="custom-date-input" aria-label="Ngày hạn chót">
+            <input type="time" id="deadline-time-input" class="custom-time-input" value="18:00" aria-label="Giờ hạn chót">
+          </div>
+        </div>
+
+        <!-- Validation Error Message Banner -->
+        <div id="deadline-error" class="deadline-error-msg">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span id="deadline-error-text">Thời gian không hợp lệ hoặc đã qua! Vui lòng chọn mốc tương lai.</span>
+        </div>
+
+        <div class="deadline-actions">
+          <button type="button" id="btn-clear-deadline" class="btn-clear-deadline">Xóa hạn chót</button>
+          <button type="button" id="btn-apply-deadline" class="btn-apply-deadline">Áp dụng</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. User Guide Modal -->
+    <div id="guide-modal-backdrop" class="guide-modal-backdrop">
+      <div class="guide-modal" role="dialog" aria-modal="true" aria-label="Hướng dẫn sử dụng TodoLite">
+        <div class="guide-modal-header">
+          <div class="guide-modal-title">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
+              <path d="M6 6h10"></path>
+              <path d="M6 10h10"></path>
+            </svg>
+            Hướng Dẫn Sử Dụng TodoLite
+          </div>
+          <button id="btn-close-guide-header" class="deadline-close-btn" title="Đóng hướng dẫn">
+            <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="guide-modal-body">
+          <!-- 1. Tabs -->
+          <div class="guide-section">
+            <div class="guide-section-header">
+              📑 1. Quản lý Tab (Sổ tay chuyên mục)
+            </div>
+            <ul class="guide-section-list">
+              <li>• <strong>Thêm tab mới:</strong> Bấm nút <span class="guide-kbd">+</span> trên thanh tab.</li>
+              <li>• <strong>Đổi tên tab:</strong> Nhấp đúp chuột (<span class="guide-kbd">Double Click</span>) vào tên tab, gõ tên mới rồi bấm <span class="guide-kbd">Enter</span>.</li>
+              <li>• <strong>Đóng tab:</strong> Rê chuột vào tab và bấm nút <span class="guide-kbd">×</span> (khi có từ 2 tab trở lên).</li>
+              <li>• <strong>Bộ đếm:</strong> Số màu xám trên tab hiển thị số việc cần làm chưa hoàn thành.</li>
+            </ul>
+          </div>
+
+          <!-- 2. Drag and Drop -->
+          <div class="guide-section">
+            <div class="guide-section-header">
+              ↕️ 2. Kéo Thả Sắp Xếp Công Việc (Drag & Drop)
+            </div>
+            <ul class="guide-section-list">
+              <li>• Nhấn giữ biểu tượng <span class="guide-kbd">⠿</span> (6 chấm) ở đầu mỗi task.</li>
+              <li>• Kéo lên hoặc kéo xuống đến vị trí mong muốn và thả chuột.</li>
+              <li>• Thứ tự mới được cập nhật tức thời và lưu tự động vào cơ sở dữ liệu SQLite.</li>
+            </ul>
+          </div>
+
+          <!-- 3. Add & Edit -->
+          <div class="guide-section">
+            <div class="guide-section-header">
+              ✍️ 3. Thêm & Chỉnh Sửa Công Việc
+            </div>
+            <ul class="guide-section-list">
+              <li>• <strong>Thêm mới:</strong> Nhập vào ô cuối cửa sổ, bấm <span class="guide-kbd">Enter</span> hoặc nút <span class="guide-kbd">+</span> vàng cam.</li>
+              <li>• <strong>Sửa nội dung:</strong> Nhấp đúp chuột trực tiếp vào dòng chữ của task để sửa nhanh inline.</li>
+              <li>• <strong>Hoàn thành:</strong> Tích vào ô vuông bên trái task (dòng chữ sẽ gạch ngang).</li>
+              <li>• <strong>Xóa task:</strong> Rê chuột vào task và bấm icon thùng rác màu đỏ.</li>
+            </ul>
+          </div>
+
+          <!-- 4. Priority & Deadline -->
+          <div class="guide-section">
+            <div class="guide-section-header">
+              🎯 4. Mức Độ Ưu Tiên & Hạn Chót (Deadline)
+            </div>
+            <ul class="guide-section-list">
+              <li>• <strong>Mức ưu tiên:</strong> Bấm nút chấm tròn để xoay vòng: Xám (None) ➔ Xanh (Low) ➔ Vàng (Medium) ➔ Đỏ (High).</li>
+              <li>• <strong>Hạn chót & Giờ cụ thể:</strong> Bấm icon <span class="guide-kbd">📅</span> Lịch để chọn mốc nhanh (Hôm nay 18h, Tối nay 21h, Ngày mai, Cuối tuần...) hoặc ngày & giờ chi tiết.</li>
+              <li>• <strong>Báo lỗi thông minh:</strong> Hệ thống tự động kiểm tra và báo lỗi đỏ nếu bạn nhập mốc thời gian sai hoặc đã qua.</li>
+            </ul>
+          </div>
+
+          <!-- 5. Search -->
+          <div class="guide-section">
+            <div class="guide-section-header">
+              🔍 5. Tìm Kiếm Siêu Tốc (Ctrl + F)
+            </div>
+            <ul class="guide-section-list">
+              <li>• Bấm icon kính lúp hoặc gõ phím tắt <span class="guide-kbd">Ctrl + F</span> để mở tìm kiếm.</li>
+              <li>• Kết quả tìm kiếm hiển thị tức thì trên tất cả các tab kèm nhóm chuyên mục rõ ràng. Nhấp vào kết quả để chuyển ngay đến task đó.</li>
+            </ul>
+          </div>
+
+          <!-- 6. Pin & Theme & Data -->
+          <div class="guide-section">
+            <div class="guide-section-header">
+              📌 6. Luôn Nổi Trên Cùng & Lưu Trữ Bền Vững
+            </div>
+            <ul class="guide-section-list">
+              <li>• <strong>Nút Ghim (Đỏ):</strong> Giúp cửa sổ TodoLite luôn nổi trên mọi ứng dụng khác (Always on Top).</li>
+              <li>• <strong>Đổi Theme:</strong> Bấm biểu tượng Mặt trời / Mặt trăng để đổi giao diện Sáng / Tối.</li>
+              <li>• <strong>Lưu trữ dữ liệu:</strong> Toàn bộ task và tab được lưu trữ tự động vào cơ sở dữ liệu SQLite cục bộ trên máy, hoàn toàn an tâm tắt mở app không bao giờ lo mất dữ liệu.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="guide-modal-footer">
+          <button id="btn-close-guide" class="btn-close-guide">Đã hiểu ✨</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Tab Close Confirmation Modal -->
+    <div id="tab-confirm-modal-backdrop" class="confirm-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+      <div class="confirm-modal">
+        <div class="confirm-modal-icon-badge">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </div>
+        <h3 id="confirm-modal-title" class="confirm-modal-title">Xác nhận đóng tab</h3>
+        <p class="confirm-modal-message">
+          Bạn có chắc đóng không, đóng lại thì bị xóa hết
+        </p>
+        <div class="confirm-modal-tab-preview">
+          Đang đóng tab: <strong id="confirm-tab-name">...</strong>
+        </div>
+        <div class="confirm-modal-actions">
+          <button id="btn-cancel-close-tab" class="btn-confirm-cancel">Hủy</button>
+          <button id="btn-confirm-close-tab" class="btn-confirm-delete">Đồng ý đóng</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Global Floating Toast Notification -->
+    <div id="app-toast" class="app-toast" role="alert" aria-live="assertive">
+      <span id="app-toast-text" class="app-toast-text"></span>
+    </div>
+  </main>
+
+  <!-- Module Entrypoint -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

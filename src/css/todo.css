@@ -1,0 +1,647 @@
+/* ==========================================================================
+   Todo Item Styles - TodoLite Glassmorphism Theme
+   Crystal Clear Readability, Elegant Floating Glass Cards
+   ========================================================================== */
+
+.todos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  position: relative;
+}
+
+/* Floating Frosted Glass Todo Card */
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  transition: all var(--trans-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.todo-item:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1.5px);
+}
+
+[data-theme="light"] .todo-item:hover {
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Priority Left Glowing Border Accent */
+.todo-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--priority-none);
+  transition: background var(--trans-fast);
+}
+
+.todo-item[data-priority="high"]::before {
+  background: var(--priority-high);
+  box-shadow: 0 0 10px var(--priority-high);
+}
+
+.todo-item[data-priority="medium"]::before {
+  background: var(--priority-medium);
+  box-shadow: 0 0 10px var(--priority-medium);
+}
+
+.todo-item[data-priority="low"]::before {
+  background: var(--priority-low);
+  box-shadow: 0 0 10px var(--priority-low);
+}
+
+/* Drag Handle */
+.todo-drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: grab;
+  opacity: 0.35;
+  transition: opacity var(--trans-fast), color var(--trans-fast);
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+.todo-item:hover .todo-drag-handle {
+  opacity: 0.85;
+  color: var(--text-secondary);
+}
+
+.todo-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Custom Glass Checkbox */
+.todo-checkbox-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.todo-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 19px;
+  height: 19px;
+  border: 1.8px solid var(--text-muted);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  outline: none;
+  transition: all var(--trans-fast);
+  position: relative;
+}
+
+.todo-checkbox:hover {
+  border-color: var(--accent-color);
+  background: var(--accent-subtle);
+  transform: scale(1.05);
+}
+
+.todo-checkbox:checked {
+  background: var(--accent-gradient);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 8px var(--accent-subtle);
+}
+
+.todo-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1.5px;
+  width: 5px;
+  height: 9px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Todo Content Area */
+.todo-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.todo-text {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--text-primary);
+  word-break: break-word;
+  transition: color var(--trans-fast);
+}
+
+/* Completed Todo Visual */
+.todo-item.completed {
+  opacity: 0.55;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.todo-item.completed .todo-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.todo-item.completed::before {
+  opacity: 0.4;
+  box-shadow: none;
+}
+
+/* Inline Edit Input */
+.todo-edit-input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--bg-card-hover);
+  border: 1.5px solid var(--accent-color);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-subtle);
+}
+
+/* Metadata Row (Priority & Deadline Badges) */
+.todo-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 1px;
+}
+
+/* Glowing Glass Priority Badge */
+.priority-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1;
+}
+
+.priority-badge.high {
+  background: var(--priority-high-bg);
+  color: var(--priority-high);
+  border: 1px solid var(--priority-high-border);
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.2);
+}
+
+.priority-badge.medium {
+  background: var(--priority-medium-bg);
+  color: var(--priority-medium);
+  border: 1px solid var(--priority-medium-border);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+}
+
+.priority-badge.low {
+  background: var(--priority-low-bg);
+  color: var(--priority-low);
+  border: 1px solid var(--priority-low-border);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
+}
+
+/* Glass Deadline Badge */
+.due-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color-subtle);
+}
+
+.due-badge.today {
+  background: var(--priority-medium-bg);
+  color: var(--priority-medium);
+  border-color: var(--priority-medium-border);
+}
+
+.due-badge.tomorrow {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.due-badge.overdue {
+  background: var(--priority-high-bg);
+  color: var(--priority-high);
+  border-color: var(--priority-high-border);
+  animation: pulseOverdue 2s infinite;
+}
+
+@keyframes pulseOverdue {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}
+
+/* Actions on Hover */
+.todo-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity var(--trans-fast);
+  flex-shrink: 0;
+}
+
+.todo-item:hover .todo-actions {
+  opacity: 1;
+}
+
+.todo-btn {
+  background: transparent;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.todo-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  transform: translateY(-0.5px);
+}
+
+.todo-btn.btn-delete:hover {
+  background: rgba(244, 63, 94, 0.2);
+  color: var(--priority-high);
+}
+
+/* ==========================================================================
+   Pointer Drag & Drop Visuals
+   ========================================================================== */
+body.is-reordering-active {
+  cursor: grabbing !important;
+  user-select: none !important;
+}
+
+body.is-reordering-active * {
+  cursor: grabbing !important;
+}
+
+.todo-item.is-dragging-origin {
+  opacity: 0.25 !important;
+  border: 1.5px dashed var(--accent-color) !important;
+  transform: scale(0.98);
+}
+
+.todo-drag-ghost {
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45) !important;
+  border-color: var(--accent-color) !important;
+  background: var(--bg-card-hover) !important;
+  border-radius: var(--radius-md);
+  will-change: transform;
+  pointer-events: none !important;
+  position: fixed !important;
+  z-index: 99999 !important;
+  overflow: hidden;
+}
+
+.drop-indicator-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: var(--accent-color);
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--accent-color);
+  pointer-events: none;
+  z-index: 50;
+  transform: translateY(-50%);
+}
+
+.drop-indicator-line::before,
+.drop-indicator-line::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  box-shadow: 0 0 6px var(--accent-color);
+}
+.drop-indicator-line::before { left: -2px; }
+.drop-indicator-line::after { right: -2px; }
+
+/* ==========================================================================
+   Empty State (Glassmorphism)
+   ========================================================================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  flex: 1;
+  min-height: 240px;
+}
+
+.empty-state-icon-wrapper {
+  width: 62px;
+  height: 62px;
+  border-radius: 18px;
+  background: var(--accent-subtle);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 0 24px var(--accent-subtle), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform var(--trans-bounce);
+}
+
+.empty-state:hover .empty-state-icon-wrapper {
+  transform: scale(1.06) rotate(3deg);
+}
+
+.empty-state-icon {
+  width: 30px;
+  height: 30px;
+  color: var(--accent-color);
+  filter: drop-shadow(0 0 8px var(--accent-color));
+}
+
+.empty-state-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.empty-state-subtitle {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  max-width: 270px;
+  line-height: 1.55;
+}
+
+/* ==========================================================================
+   Deadline Picker Popover Modal (Glassmorphism)
+   ========================================================================== */
+.deadline-popover-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--trans-fast);
+}
+
+.deadline-popover-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.deadline-popover {
+  background: var(--bg-window-mesh);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-color);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45);
+  width: 100%;
+  max-width: 480px;
+  padding: 16px 18px 20px;
+  transform: translateY(100%);
+  transition: transform var(--trans-bounce);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.deadline-popover-backdrop.open .deadline-popover {
+  transform: translateY(0);
+}
+
+.deadline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.deadline-title {
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+
+.deadline-close-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--trans-fast);
+}
+
+.deadline-close-btn:hover {
+  background: rgba(244, 63, 94, 0.2);
+  color: var(--priority-high);
+}
+
+.deadline-presets-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.deadline-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.preset-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.preset-chip:hover {
+  border-color: var(--accent-color);
+  background: var(--accent-subtle);
+  color: var(--accent-color);
+  transform: translateY(-1px);
+}
+
+.preset-chip .preset-time {
+  font-size: 11px;
+  opacity: 0.75;
+  font-family: var(--font-mono);
+}
+
+.deadline-custom-row {
+  display: flex;
+  gap: 10px;
+}
+
+.deadline-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.deadline-field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.deadline-input {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: var(--radius-sm);
+  padding: 7px 10px;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--text-primary);
+  outline: none;
+  transition: all var(--trans-fast);
+}
+
+.deadline-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-subtle);
+}
+
+/* Error Banner in Deadline Popover */
+.deadline-error-banner {
+  display: none;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(244, 63, 94, 0.15);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  color: #fda4af;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+[data-theme="light"] .deadline-error-banner {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.deadline-error-banner.show {
+  display: block;
+  animation: bannerShake 0.4s ease;
+}
+
+@keyframes bannerShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.deadline-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-deadline-clear {
+  background: transparent;
+  border: 1px solid var(--border-color-subtle);
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.btn-deadline-clear:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.btn-deadline-apply {
+  background: var(--accent-gradient);
+  border: none;
+  padding: 7px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+  transition: all var(--trans-fast);
+}
+
+.btn-deadline-apply:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}

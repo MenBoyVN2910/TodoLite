@@ -1,0 +1,185 @@
+/* ==========================================================================
+   Minimalist Theme Extension - TodoLite
+   Clean, distraction-free, crisp flat design with optimal readability.
+   ========================================================================== */
+
+/* Light Minimalist Tokens */
+:root[data-style="minimal"],
+[data-style="minimal"][data-theme="light"],
+[data-style="minimal"] {
+  --min-bg-window: #ffffff;
+  --min-bg-titlebar: #ffffff;
+  --min-bg-tabbar: #f8fafc;
+  --min-bg-toolbar: #ffffff;
+  --min-bg-tab-active: #ffffff;
+  --min-bg-tab-hover: #f1f5f9;
+  --min-bg-card: #ffffff;
+  --min-bg-card-hover: #f8fafc;
+  --min-bg-inputbar: #ffffff;
+  --min-bg-input: #f8fafc;
+  --min-bg-modal: #ffffff;
+  --min-border: #e2e8f0;
+  --min-border-subtle: #f1f5f9;
+  --min-border-card: #e2e8f0;
+  --min-border-card-hover: #cbd5e1;
+  --min-shadow-window: 0 16px 40px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --min-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --min-shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --min-shadow-modal: 0 20px 45px rgba(0, 0, 0, 0.12);
+}
+
+/* Dark Minimalist Tokens */
+[data-style="minimal"][data-theme="dark"] {
+  --min-bg-window: #11141c;
+  --min-bg-titlebar: #11141c;
+  --min-bg-tabbar: #0c0e14;
+  --min-bg-toolbar: #11141c;
+  --min-bg-tab-active: #191e2b;
+  --min-bg-tab-hover: #151822;
+  --min-bg-card: #181d28;
+  --min-bg-card-hover: #1e2433;
+  --min-bg-inputbar: #11141c;
+  --min-bg-input: #181d28;
+  --min-bg-modal: #151a25;
+  --min-border: rgba(255, 255, 255, 0.10);
+  --min-border-subtle: rgba(255, 255, 255, 0.06);
+  --min-border-card: rgba(255, 255, 255, 0.08);
+  --min-border-card-hover: rgba(255, 255, 255, 0.16);
+  --min-shadow-window: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --min-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --min-shadow-card-hover: 0 4px 14px rgba(0, 0, 0, 0.38);
+  --min-shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.8);
+}
+
+/* Minimalist Window Container */
+[data-style="minimal"] #app-window {
+  background: var(--min-bg-window) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: var(--min-shadow-window) !important;
+  border: 1px solid var(--min-border) !important;
+}
+
+[data-style="minimal"] #app-window.is-pinned {
+  box-shadow: var(--min-shadow-window), 0 0 0 1px var(--accent-color) !important;
+}
+
+/* Minimalist Titlebar */
+[data-style="minimal"] .app-titlebar {
+  background: var(--min-bg-titlebar) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 1px solid var(--min-border-subtle) !important;
+}
+
+/* Minimalist Tabs */
+[data-style="minimal"] .tab-navigation {
+  background: var(--min-bg-tabbar) !important;
+  border-bottom: 1px solid var(--min-border-subtle) !important;
+}
+
+[data-style="minimal"] .tab-item {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+}
+
+[data-style="minimal"] .tab-item:hover {
+  background: var(--min-bg-tab-hover) !important;
+  border-color: var(--min-border-subtle) !important;
+}
+
+[data-style="minimal"] .tab-item.active {
+  background: var(--min-bg-tab-active) !important;
+  border: 1px solid var(--min-border) !important;
+  box-shadow: var(--min-shadow-card) !important;
+}
+
+[data-style="minimal"] .tab-add-btn {
+  background: transparent !important;
+  border: 1px dashed var(--min-border) !important;
+}
+
+[data-style="minimal"] .tab-add-btn:hover {
+  background: var(--min-bg-tab-hover) !important;
+  border-color: var(--accent-color) !important;
+}
+
+/* Minimalist Toolbar */
+[data-style="minimal"] .sub-toolbar {
+  background: var(--min-bg-toolbar) !important;
+  border-bottom: 1px solid var(--min-border-subtle) !important;
+}
+
+/* Minimalist Cards */
+[data-style="minimal"] .todo-item {
+  background: var(--min-bg-card) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid var(--min-border-card) !important;
+  box-shadow: var(--min-shadow-card) !important;
+}
+
+[data-style="minimal"] .todo-item:hover {
+  background: var(--min-bg-card-hover) !important;
+  border-color: var(--min-border-card-hover) !important;
+  box-shadow: var(--min-shadow-card-hover) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Minimalist Quick Input Dock */
+[data-style="minimal"] .quick-input-bar {
+  background: var(--min-bg-inputbar) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-top: 1px solid var(--min-border-subtle) !important;
+  box-shadow: none !important;
+}
+
+[data-style="minimal"] .input-wrapper {
+  background: var(--min-bg-input) !important;
+  border: 1px solid var(--min-border-card) !important;
+  box-shadow: none !important;
+}
+
+[data-style="minimal"] .input-wrapper:focus-within {
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 0 1px var(--accent-color) !important;
+}
+
+/* Minimalist Search Overlay */
+[data-style="minimal"] .search-overlay {
+  background: rgba(0, 0, 0, 0.65) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+[data-style="minimal"] .search-box {
+  background: var(--min-bg-card) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 1px solid var(--min-border-subtle) !important;
+  box-shadow: var(--min-shadow-card) !important;
+}
+
+[data-style="minimal"] .search-result-item {
+  background: var(--min-bg-card) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid var(--min-border-card) !important;
+}
+
+[data-style="minimal"] .search-result-item:hover {
+  background: var(--min-bg-card-hover) !important;
+  border-color: var(--accent-color) !important;
+}
+
+/* Minimalist Modals (Guide, Deadline) */
+[data-style="minimal"] .guide-modal,
+[data-style="minimal"] .deadline-popover {
+  background: var(--min-bg-modal) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid var(--min-border) !important;
+  box-shadow: var(--min-shadow-modal) !important;
+}

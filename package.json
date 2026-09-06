@@ -1,0 +1,19 @@
+{
+  "name": "todolite",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "tauri": "tauri",
+    "dev": "tauri dev",
+    "build": "tauri build --no-bundle && node scripts/copy-exe.js",
+    "copy:exe": "node scripts/copy-exe.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4"
+  }
+}

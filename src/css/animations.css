@@ -1,0 +1,85 @@
+/* ==========================================================================
+   Micro-animations & Transitions - TodoLite
+   ========================================================================== */
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes checkBounce {
+  0% { transform: scale(0.6); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.todo-item {
+  animation: fadeInScale 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.todo-checkbox:checked + .todo-checkbox-icon {
+  animation: checkBounce 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-pin.active {
+  animation: pulseGlow 1.5s infinite;
+}
+
+/* Modal / Dropdown / Popover Animation */
+.popover-menu {
+  position: absolute;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hover);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 200;
+  animation: slideInDown 0.15s ease-out;
+}
+
+.popover-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: all var(--trans-fast);
+}
+
+.popover-item:hover {
+  background: var(--accent-subtle);
+  color: var(--accent-color);
+}

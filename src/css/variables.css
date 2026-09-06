@@ -1,0 +1,141 @@
+/* ==========================================================================
+   Design Tokens & CSS Variables - TodoLite Glassmorphism Theme
+   High-end Frosted Glass, Ambient Lighting & Crystal-Clear Readability
+   ========================================================================== */
+
+:root {
+  /* Font Families - Clean Modern Sans */
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+
+  /* Dimensions */
+  --header-height: 46px;
+  --tabbar-height: 42px;
+  --toolbar-height: 40px;
+  --input-bar-height: 56px;
+  --radius-window: 16px;
+  --radius-lg: 12px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+  --radius-pill: 9999px;
+
+  /* Smooth Transitions */
+  --trans-fast: 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  --trans-normal: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  --trans-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Priorities - Luminous Neon Glass Accents */
+  --priority-high: #f43f5e;
+  --priority-high-bg: rgba(244, 63, 94, 0.15);
+  --priority-high-border: rgba(244, 63, 94, 0.35);
+
+  --priority-medium: #f59e0b;
+  --priority-medium-bg: rgba(245, 158, 11, 0.15);
+  --priority-medium-border: rgba(245, 158, 11, 0.35);
+
+  --priority-low: #38bdf8;
+  --priority-low-bg: rgba(56, 189, 248, 0.15);
+  --priority-low-border: rgba(56, 189, 248, 0.35);
+
+  --priority-none: #94a3b8;
+  --priority-none-bg: rgba(148, 163, 184, 0.12);
+  --priority-none-border: rgba(148, 163, 184, 0.25);
+}
+
+/* Light Mode: Frosted Ice & Crystal Glass */
+:root, [data-theme="light"] {
+  /* Translucent Glass Base */
+  --bg-app: rgba(248, 250, 252, 0.78);
+  --bg-window-mesh: radial-gradient(circle at 10% 0%, rgba(254, 243, 199, 0.45) 0%, transparent 40%),
+                    radial-gradient(circle at 90% 90%, rgba(224, 231, 255, 0.45) 0%, transparent 45%),
+                    rgba(255, 255, 255, 0.75);
+
+  --bg-notebook: rgba(255, 255, 255, 0.65);
+  --bg-titlebar: rgba(255, 255, 255, 0.60);
+  --bg-card: rgba(255, 255, 255, 0.70);
+  --bg-card-hover: rgba(255, 255, 255, 0.92);
+  --bg-input: rgba(255, 255, 255, 0.85);
+
+  --bg-tab-active: rgba(255, 255, 255, 0.90);
+  --bg-tab-inactive: rgba(0, 0, 0, 0.04);
+  --bg-tab-hover: rgba(0, 0, 0, 0.07);
+
+  /* Glass Borders & Specular Highlights */
+  --border-color: rgba(255, 255, 255, 0.75);
+  --border-color-subtle: rgba(0, 0, 0, 0.06);
+  --glass-rim: rgba(255, 255, 255, 0.9);
+  --glass-specular: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  --glass-blur: blur(28px) saturate(190%);
+
+  /* High Readability Typography */
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
+
+  /* Accent: Golden Amber */
+  --accent-color: #d97706;
+  --accent-hover: #b45309;
+  --accent-subtle: rgba(217, 119, 6, 0.12);
+  --accent-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+
+  /* Pin Active Button */
+  --pin-active-color: #ef4444;
+  --pin-active-bg: rgba(239, 68, 68, 0.15);
+  --pin-inactive-color: #64748b;
+
+  /* Shadows */
+  --shadow-window: 0 24px 60px -10px rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(255, 255, 255, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --shadow-pinned: 0 24px 60px -10px rgba(0, 0, 0, 0.18), 0 0 30px rgba(244, 63, 94, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* Dark Mode: Deep Space Obsidian Glassmorphism */
+[data-theme="dark"] {
+  /* Translucent Glass Base */
+  --bg-app: rgba(15, 20, 32, 0.72);
+  --bg-window-mesh: radial-gradient(circle at 10% 0%, rgba(245, 158, 11, 0.14) 0%, transparent 45%),
+                    radial-gradient(circle at 90% 90%, rgba(99, 102, 241, 0.14) 0%, transparent 50%),
+                    rgba(15, 20, 32, 0.72);
+
+  --bg-notebook: rgba(15, 20, 32, 0.65);
+  --bg-titlebar: rgba(18, 24, 38, 0.55);
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --bg-card-hover: rgba(255, 255, 255, 0.09);
+  --bg-input: rgba(255, 255, 255, 0.06);
+
+  --bg-tab-active: rgba(255, 255, 255, 0.14);
+  --bg-tab-inactive: rgba(255, 255, 255, 0.04);
+  --bg-tab-hover: rgba(255, 255, 255, 0.08);
+
+  /* Glass Borders & Specular Highlights */
+  --border-color: rgba(255, 255, 255, 0.12);
+  --border-color-subtle: rgba(255, 255, 255, 0.06);
+  --glass-rim: rgba(255, 255, 255, 0.18);
+  --glass-specular: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --glass-blur: blur(28px) saturate(190%);
+
+  /* High Readability Typography */
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-inverse: #0f172a;
+
+  /* Accent: Glowing Cyber Amber */
+  --accent-color: #f59e0b;
+  --accent-hover: #fbbf24;
+  --accent-subtle: rgba(245, 158, 11, 0.18);
+  --accent-gradient: linear-gradient(135deg, #fbbf24, #f59e0b);
+
+  /* Pin Active Button */
+  --pin-active-color: #f43f5e;
+  --pin-active-bg: rgba(244, 63, 94, 0.22);
+  --pin-inactive-color: #94a3b8;
+
+  /* Shadows */
+  --shadow-window: 0 28px 70px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --shadow-pinned: 0 30px 75px rgba(0, 0, 0, 0.65), 0 0 30px rgba(244, 63, 94, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}

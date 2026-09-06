@@ -1,0 +1,328 @@
+/* ==========================================================================
+   Notebook Paper & Navigation Styles - TodoLite Glassmorphism
+   ========================================================================== */
+
+/* Main Content Container - Pristine Translucent Frosted Glass */
+.notebook-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  background: transparent;
+}
+
+/* Tab Header Navigation Bar - Floating Glass Tabs */
+.tab-navigation {
+  display: flex;
+  align-items: center;
+  height: var(--tabbar-height);
+  background: rgba(0, 0, 0, 0.12);
+  padding: 0 10px;
+  gap: 6px;
+  border-bottom: 1px solid var(--border-color-subtle);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+
+[data-theme="light"] .tab-navigation {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.tab-navigation::-webkit-scrollbar {
+  display: none;
+}
+
+.tabs-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+}
+
+.tab-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-tab-inactive);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color-subtle);
+  cursor: pointer;
+  white-space: nowrap;
+  max-width: 130px;
+  min-width: 54px;
+  position: relative;
+  transition: all var(--trans-fast);
+}
+
+.tab-item:hover {
+  background: var(--bg-tab-hover);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-0.5px);
+}
+
+.tab-item.active {
+  background: var(--bg-tab-active);
+  color: var(--text-primary);
+  font-weight: 600;
+  border-color: var(--border-color);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18), var(--glass-specular);
+}
+
+.tab-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.tab-count {
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  border-radius: var(--radius-pill);
+  padding: 0 5px;
+  line-height: 15px;
+  min-width: 15px;
+  text-align: center;
+  border: 1px solid var(--border-color-subtle);
+}
+
+.tab-item.active .tab-count {
+  background: var(--accent-subtle);
+  color: var(--accent-color);
+  border-color: transparent;
+}
+
+.tab-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  padding: 0;
+  margin-left: 2px;
+}
+
+.tab-close-btn:hover {
+  background: rgba(244, 63, 94, 0.25);
+  color: var(--priority-high);
+}
+
+.tab-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color-subtle);
+  background: var(--bg-tab-inactive);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  flex-shrink: 0;
+}
+
+.tab-add-btn:hover {
+  background: var(--bg-tab-hover);
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+  transform: translateY(-0.5px);
+}
+
+.tab-add-btn.at-limit {
+  opacity: 0.5;
+}
+
+.tab-add-btn.at-limit:hover {
+  border-color: var(--priority-high);
+  color: var(--priority-high);
+  background: rgba(244, 63, 94, 0.15);
+}
+
+.tab-add-btn.shake {
+  animation: tabBtnShake 0.4s ease;
+}
+
+@keyframes tabBtnShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-3px); }
+  40%, 80% { transform: translateX(3px); }
+}
+
+/* ==========================================================================
+   Sub-Toolbar (Active Tab Category & Search Quick Trigger)
+   ========================================================================== */
+.sub-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--border-color-subtle);
+  flex-shrink: 0;
+}
+
+.toolbar-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tool-icon-btn {
+  background: transparent;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.tool-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+   Todo List Scroll View Area
+   ========================================================================== */
+.todo-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   Quick Input Footer (Floating Glass Dock)
+   ========================================================================== */
+.quick-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-titlebar);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border-color-subtle);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: var(--radius-md);
+  padding: 0 10px;
+  transition: all var(--trans-fast);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-subtle), 0 0 14px var(--accent-subtle);
+  background: var(--bg-card-hover);
+}
+
+.todo-text-input {
+  flex: 1;
+  height: 38px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-primary);
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.todo-text-input::placeholder {
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+
+.input-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.priority-picker-btn, .date-picker-btn {
+  background: transparent;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.priority-picker-btn:hover, .date-picker-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.btn-add-todo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background: var(--accent-gradient);
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(245, 158, 11, 0.4);
+  transition: all var(--trans-fast);
+  flex-shrink: 0;
+}
+
+.btn-add-todo:hover {
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 5px 16px rgba(245, 158, 11, 0.6);
+  filter: brightness(1.08);
+}
+
+.btn-add-todo:active {
+  transform: translateY(1px) scale(0.97);
+}
