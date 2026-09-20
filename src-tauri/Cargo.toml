@@ -1,6 +1,6 @@
 [package]
 name = "todolite"
-version = "0.1.0"
+version = "2.0.0"
 description = "A lightweight notebook todo app for Windows"
 edition = "2021"
 

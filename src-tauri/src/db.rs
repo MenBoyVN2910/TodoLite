@@ -25,6 +25,14 @@ pub struct TodoItem {
     pub created_at: String,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct NoteItem {
+    pub id: String,
+    pub tab_id: String,
+    pub content: String,
+    pub updated_at: String,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ReorderItem {
     pub id: String,
@@ -82,6 +90,26 @@ impl DbState {
             "CREATE TABLE IF NOT EXISTS settings (
                 key TEXT PRIMARY KEY,
                 value TEXT NOT NULL
+            )",
+            [],
+        )?;
+
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS notes (
+                id TEXT PRIMARY KEY,
+                tab_id TEXT NOT NULL UNIQUE,
+                content TEXT NOT NULL DEFAULT '',
+                updated_at TEXT NOT NULL
+            )",
+            [],
+        )?;
+
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS note_tabs (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                sort_order INTEGER NOT NULL,
+                created_at TEXT NOT NULL
             )",
             [],
         )?;
@@ -144,6 +172,30 @@ impl DbState {
                     Option::<String>::None,
                     &now
                 ],
+            )?;
+        }
+
+        // Insert initial note_tabs and note if empty
+        let note_tab_count: i64 = conn.query_row("SELECT COUNT(*) FROM note_tabs", [], |r| r.get(0)).unwrap_or(0);
+        if note_tab_count == 0 {
+            let now = chrono::Utc::now().to_rfc3339();
+            let note_tab1_id = "note-tab-1";
+            let note_tab2_id = "note-tab-2";
+
+            conn.execute(
+                "INSERT INTO note_tabs (id, name, sort_order, created_at) VALUES (?1, ?2, ?3, ?4)",
+                params![note_tab1_id, "Ghi chú 1", 0, &now],
+            )?;
+            conn.execute(
+                "INSERT INTO note_tabs (id, name, sort_order, created_at) VALUES (?1, ?2, ?3, ?4)",
+                params![note_tab2_id, "Ý tưởng", 1, &now],
+            )?;
+
+            let initial_note = "<h2>Chào mừng bạn đến với TakeNote! ✨</h2><p>Đây là sổ tay ghi chú thông minh được tích hợp ngay trong TodoLite.</p><ul><li>Hỗ trợ gõ tiếng Việt có dấu chuẩn xác 🇻🇳</li><li>Có thể <strong>in đậm</strong>, <em>in nghiêng</em>, <u>gạch chân</u></li><li><mark style=\"background-color: #fef08a;\">Highlight màu sắc</mark> để làm nổi bật ý quan trọng</li><li>Chèn biểu tượng cảm xúc 💡 🎯 🚀</li></ul><p>Thử ghi lại những suy nghĩ hay ghi chú công việc của bạn ngay tại đây nhé!</p>";
+
+            conn.execute(
+                "INSERT OR REPLACE INTO notes (id, tab_id, content, updated_at) VALUES (?1, ?2, ?3, ?4)",
+                params!["note-seed-1", note_tab1_id, initial_note, &now],
             )?;
         }
 
@@ -384,6 +436,158 @@ impl DbState {
         }
         tx.commit()?;
         Ok(())
+    }
+
+    // Note Tabs CRUD
+    pub fn get_all_note_tabs(&self) -> Result<Vec<TabItem>> {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare("SELECT id, name, sort_order, created_at FROM note_tabs ORDER BY sort_order ASC")?;
+        let rows = stmt.query_map([], |row| {
+            Ok(TabItem {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                sort_order: row.get(2)?,
+                created_at: row.get(3)?,
+            })
+        })?;
+
+        let mut tabs = Vec::new();
+        for tab in rows {
+            tabs.push(tab?);
+        }
+        Ok(tabs)
+    }
+
+    pub fn create_note_tab(&self, name: String) -> Result<TabItem> {
+        let conn = self.conn.lock().unwrap();
+        let id = Uuid::new_v4().to_string();
+        let max_sort: i32 = conn.query_row(
+            "SELECT COALESCE(MAX(sort_order), -1) FROM note_tabs",
+            [],
+            |r| r.get(0),
+        ).unwrap_or(-1);
+        let sort_order = max_sort + 1;
+        let created_at = chrono::Utc::now().to_rfc3339();
+
+        conn.execute(
+            "INSERT INTO note_tabs (id, name, sort_order, created_at) VALUES (?1, ?2, ?3, ?4)",
+            params![&id, &name, sort_order, &created_at],
+        )?;
+
+        Ok(TabItem {
+            id,
+            name,
+            sort_order,
+            created_at,
+        })
+    }
+
+    pub fn update_note_tab(&self, id: String, name: String) -> Result<TabItem> {
+        let conn = self.conn.lock().unwrap();
+        conn.execute(
+            "UPDATE note_tabs SET name = ?1 WHERE id = ?2",
+            params![&name, &id],
+        )?;
+
+        let tab = conn.query_row(
+            "SELECT id, name, sort_order, created_at FROM note_tabs WHERE id = ?1",
+            params![&id],
+            |r| {
+                Ok(TabItem {
+                    id: r.get(0)?,
+                    name: r.get(1)?,
+                    sort_order: r.get(2)?,
+                    created_at: r.get(3)?,
+                })
+            },
+        )?;
+        Ok(tab)
+    }
+
+    pub fn delete_note_tab(&self, id: String) -> Result<()> {
+        let conn = self.conn.lock().unwrap();
+        conn.execute("DELETE FROM notes WHERE tab_id = ?1", params![&id])?;
+        conn.execute("DELETE FROM note_tabs WHERE id = ?1", params![&id])?;
+        Ok(())
+    }
+
+    // Notes CRUD
+    pub fn get_all_notes(&self) -> Result<Vec<NoteItem>> {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "SELECT id, tab_id, content, updated_at FROM notes"
+        )?;
+        let rows = stmt.query_map([], |row| {
+            Ok(NoteItem {
+                id: row.get(0)?,
+                tab_id: row.get(1)?,
+                content: row.get(2)?,
+                updated_at: row.get(3)?,
+            })
+        })?;
+
+        let mut notes = Vec::new();
+        for note in rows {
+            notes.push(note?);
+        }
+        Ok(notes)
+    }
+
+    pub fn get_note_by_tab(&self, tab_id: String) -> Result<Option<NoteItem>> {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "SELECT id, tab_id, content, updated_at FROM notes WHERE tab_id = ?1"
+        )?;
+        let mut rows = stmt.query_map(params![&tab_id], |row| {
+            Ok(NoteItem {
+                id: row.get(0)?,
+                tab_id: row.get(1)?,
+                content: row.get(2)?,
+                updated_at: row.get(3)?,
+            })
+        })?;
+
+        if let Some(note) = rows.next() {
+            Ok(Some(note?))
+        } else {
+            Ok(None)
+        }
+    }
+
+    pub fn upsert_note(&self, tab_id: String, content: String) -> Result<NoteItem> {
+        let conn = self.conn.lock().unwrap();
+        let updated_at = chrono::Utc::now().to_rfc3339();
+        
+        let existing_id: Option<String> = conn.query_row(
+            "SELECT id FROM notes WHERE tab_id = ?1",
+            params![&tab_id],
+            |r| r.get(0),
+        ).ok();
+
+        let id = match existing_id {
+            Some(old_id) => {
+                conn.execute(
+                    "UPDATE notes SET content = ?1, updated_at = ?2 WHERE id = ?3",
+                    params![&content, &updated_at, &old_id],
+                )?;
+                old_id
+            }
+            None => {
+                let new_id = Uuid::new_v4().to_string();
+                conn.execute(
+                    "INSERT INTO notes (id, tab_id, content, updated_at) VALUES (?1, ?2, ?3, ?4)",
+                    params![&new_id, &tab_id, &content, &updated_at],
+                )?;
+                new_id
+            }
+        };
+
+        Ok(NoteItem {
+            id,
+            tab_id,
+            content,
+            updated_at,
+        })
     }
 }
 

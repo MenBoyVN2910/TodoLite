@@ -61,6 +61,11 @@ export class TabManager {
       this.updateCurrentTabLabel();
     });
     store.subscribe('todos', () => this.render());
+    store.subscribe('viewMode', (mode) => {
+      if (mode === 'checklist') {
+        this.updateCurrentTabLabel();
+      }
+    });
   }
 
   showToast(message, type = 'info') {
@@ -199,7 +204,8 @@ export class TabManager {
   }
 
   updateCurrentTabLabel() {
-    const { tabs, activeTabId } = store.getState();
+    const { tabs, activeTabId, viewMode } = store.getState();
+    if (viewMode !== 'checklist') return;
     const current = tabs.find(t => t.id === activeTabId);
     if (this.currentTabTitleEl && current) {
       this.currentTabTitleEl.textContent = current.name;

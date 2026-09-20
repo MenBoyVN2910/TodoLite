@@ -11,6 +11,10 @@ class StateStore {
       isPinned: true, // Default always on top
       theme: 'light',
       style: 'glass', // 'glass' | 'minimal'
+      viewMode: 'checklist', // 'checklist' | 'note'
+      activeNoteTabId: null,
+      noteTabs: [], // Note mode tabs list
+      notes: {}, // Cache of notes by tabId: { [tabId]: NoteItem }
       searchQuery: '',
       isSearchOpen: false
     };

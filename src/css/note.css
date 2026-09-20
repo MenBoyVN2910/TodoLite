@@ -1,0 +1,691 @@
+/* ==========================================================================
+   TodoLite - TakeNote (Rich Text Editor) Stylesheet
+   High-end Glassmorphism Aesthetics & Vietnamese Typography Support
+   ========================================================================== */
+
+/* Mode Toggle Badge in Titlebar */
+.app-badge.mode-badge {
+  background: rgba(168, 85, 247, 0.15);
+  color: #a855f7;
+  border-color: rgba(168, 85, 247, 0.3);
+  margin-left: 2px;
+}
+
+.app-badge.mode-badge:hover {
+  background: #a855f7;
+  color: #ffffff;
+  border-color: #a855f7;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+}
+
+.app-badge.mode-badge.is-note {
+  background: rgba(16, 185, 129, 0.16);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.app-badge.mode-badge.is-note:hover {
+  background: #10b981;
+  color: #ffffff;
+  border-color: #10b981;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+/* Visibility Control between Checklist & Note Modes */
+#app-window.mode-note #checklist-tab-nav {
+  display: none !important;
+}
+
+#app-window:not(.mode-note) #note-tab-nav {
+  display: none !important;
+}
+
+#app-window.mode-note #note-tab-nav {
+  display: flex !important;
+}
+
+#app-window.mode-note .todo-scroll-area {
+  display: none !important;
+}
+
+#app-window.mode-note .quick-input-bar {
+  display: none !important;
+}
+
+#app-window.mode-note .note-editor-area {
+  display: flex !important;
+}
+
+/* TakeNote Main Editor Area Container */
+.note-editor-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+  position: relative;
+  background: transparent;
+}
+
+/* Toolbar - Glassmorphism Floating Bar */
+.note-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 5px 10px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color-subtle);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 20;
+}
+
+.toolbar-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--border-color-subtle);
+  margin: 0 3px;
+  flex-shrink: 0;
+}
+
+/* Toolbar Action Buttons */
+.note-tool-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--font-main);
+  transition: all var(--trans-fast);
+  user-select: none;
+  position: relative;
+}
+
+.note-tool-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-color-subtle);
+  box-shadow: var(--shadow-card);
+}
+
+.note-tool-btn:active,
+.note-tool-btn.active {
+  background: var(--accent-subtle);
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+/* Color indicator underline */
+.color-indicator-char {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.color-bar {
+  display: block;
+  width: 14px;
+  height: 2.5px;
+  border-radius: 1px;
+  margin-top: 1px;
+  background-color: var(--text-primary);
+}
+
+/* Select Dropdowns in Toolbar */
+.note-select {
+  height: 26px;
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--font-main);
+  color: var(--text-secondary);
+  background: var(--bg-input);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: var(--radius-sm);
+  outline: none;
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.note-select:hover,
+.note-select:focus {
+  border-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+.note-select option {
+  background: var(--bg-app);
+  color: var(--text-primary);
+}
+
+/* Popover Dropdown Panels (Color, Highlight, Emoji) */
+.popover-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.note-popover {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: var(--bg-app);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-window);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  padding: 8px;
+  z-index: 100;
+  animation: popoverFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.note-popover.open {
+  display: block;
+}
+
+@keyframes popoverFadeIn {
+  from {
+    opacity: 0;
+    margin-top: -4px;
+  }
+  to {
+    opacity: 1;
+    margin-top: 0;
+  }
+}
+
+.palette-title {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  padding-left: 2px;
+}
+
+/* Color Grid */
+.color-palette {
+  width: 170px;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.palette-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  padding: 0;
+}
+
+.palette-swatch:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+.palette-swatch.clear-highlight {
+  background: transparent !important;
+  color: var(--text-muted);
+  border: 1px dashed var(--text-muted);
+  font-weight: bold;
+}
+
+/* Emoji Grid Popover */
+.emoji-palette {
+  width: 226px;
+  max-height: 270px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 10px;
+}
+
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  justify-items: center;
+  align-items: center;
+}
+
+.emoji-item {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--trans-fast), transform var(--trans-fast);
+  padding: 0;
+}
+
+.emoji-item:hover {
+  background: var(--bg-card-hover);
+  transform: scale(1.2);
+}
+
+/* Editor Scroll Wrapper & ContentEditable Area */
+.note-editor-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 18px;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color-subtle) transparent;
+}
+
+.note-editor-wrapper::-webkit-scrollbar {
+  width: 5px;
+}
+
+.note-editor-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-color-subtle);
+  border-radius: 4px;
+}
+
+.note-editor-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Rich Text Editor Body */
+.note-editor {
+  min-height: 100%;
+  outline: none;
+  word-break: break-word;
+  font-family: var(--font-main);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-primary);
+  caret-color: var(--accent-color);
+}
+
+/* Placeholder support */
+.note-editor:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+  opacity: 0.55;
+  pointer-events: none;
+  display: block;
+}
+
+/* Rich Text Elements Inside ContentEditable */
+.note-editor h1 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 14px 0 8px 0;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color-subtle);
+  padding-bottom: 4px;
+}
+
+.note-editor h2 {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 12px 0 6px 0;
+  color: var(--text-primary);
+}
+
+.note-editor h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 10px 0 4px 0;
+  color: var(--text-primary);
+}
+
+.note-editor p {
+  margin: 0 0 8px 0;
+}
+
+.note-editor mark {
+  border-radius: 3px;
+  padding: 1px 4px;
+  color: inherit;
+}
+
+.note-editor ul,
+.note-editor ol {
+  margin: 6px 0 10px 0;
+  padding-left: 22px;
+}
+
+.note-editor li {
+  margin-bottom: 4px;
+}
+
+.note-editor hr {
+  border: none;
+  height: 1px;
+  background: var(--border-color-subtle);
+  margin: 14px 0;
+}
+
+.note-editor blockquote {
+  border-left: 3px solid var(--accent-color);
+  margin: 8px 0;
+  padding: 4px 10px;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* Status Bar */
+.note-statusbar {
+  height: 26px;
+  padding: 0 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-titlebar);
+  border-top: 1px solid var(--border-color-subtle);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.note-status-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot {
+  opacity: 0.4;
+}
+
+.note-sync-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  transition: opacity 0.2s ease;
+}
+
+.note-sync-indicator.saving {
+  color: var(--accent-color);
+}
+
+.note-sync-indicator.saved {
+  color: #10b981;
+}
+
+.note-sync-indicator svg {
+  transition: transform 0.2s ease;
+}
+
+.note-sync-indicator.saving svg {
+  animation: spinSync 0.8s linear infinite;
+}
+
+@keyframes spinSync {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   Theme Color Normalization for ContentEditable
+   Neutralize browser-injected computed styles (Enter/Backspace/Pasting)
+   ========================================================================== */
+
+.note-editor [style*="color: rgb(248, 250, 252)"],
+.note-editor [style*="color: rgb(248,250,252)"],
+.note-editor [style*="color:#f8fafc"],
+.note-editor [style*="color: #f8fafc"],
+.note-editor [style*="color: rgb(15, 23, 42)"],
+.note-editor [style*="color: rgb(15,23,42)"],
+.note-editor [style*="color:#0f172a"],
+.note-editor [style*="color: #0f172a"],
+.note-editor [style*="color: rgb(0, 0, 0)"]:not([data-user-color]),
+.note-editor [style*="color: rgb(0,0,0)"]:not([data-user-color]),
+.note-editor [style*="color:#000000"]:not([data-user-color]),
+.note-editor [style*="color: #000000"]:not([data-user-color]),
+.note-editor [style*="color: black"]:not([data-user-color]),
+.note-editor [style*="color: rgb(255, 255, 255)"]:not([data-user-color]),
+.note-editor [style*="color: rgb(255,255,255)"]:not([data-user-color]),
+.note-editor [style*="color:#ffffff"]:not([data-user-color]),
+.note-editor [style*="color: #ffffff"]:not([data-user-color]),
+.note-editor [style*="color: white"]:not([data-user-color]) {
+  color: var(--text-primary) !important;
+}
+
+.note-editor [style*="background-color: transparent"],
+.note-editor [style*="background-color: rgba(0, 0, 0, 0)"],
+.note-editor [style*="background-color: rgba(0,0,0,0)"] {
+  background-color: transparent !important;
+}
+
+/* ==========================================================================
+   Dark Theme Highlight Color Overrides
+   Dim highlight backgrounds & enforce readable text in dark mode
+   ========================================================================== */
+
+/* Yellow highlight → warm amber dim */
+[data-theme="dark"] .note-editor span[style*="background-color: rgb(254, 240, 138)"],
+[data-theme="dark"] .note-editor span[style*="background-color: rgb(254,240,138)"],
+[data-theme="dark"] .note-editor [style*="background-color: rgb(254, 240, 138)"],
+[data-theme="dark"] .note-editor [style*="background-color:#fef08a"],
+[data-theme="dark"] .note-editor [style*="background-color: #fef08a"] {
+  background-color: rgba(250, 204, 21, 0.35) !important;
+  color: #fef9c3 !important;
+}
+
+/* Green highlight → soft green dim */
+[data-theme="dark"] .note-editor span[style*="background-color: rgb(187, 247, 208)"],
+[data-theme="dark"] .note-editor span[style*="background-color: rgb(187,247,208)"],
+[data-theme="dark"] .note-editor [style*="background-color: rgb(187, 247, 208)"],
+[data-theme="dark"] .note-editor [style*="background-color:#bbf7d0"],
+[data-theme="dark"] .note-editor [style*="background-color: #bbf7d0"] {
+  background-color: rgba(34, 197, 94, 0.3) !important;
+  color: #d1fae5 !important;
+}
+
+/* Blue highlight → cool blue dim */
+[data-theme="dark"] .note-editor span[style*="background-color: rgb(186, 230, 253)"],
+[data-theme="dark"] .note-editor span[style*="background-color: rgb(186,230,253)"],
+[data-theme="dark"] .note-editor [style*="background-color: rgb(186, 230, 253)"],
+[data-theme="dark"] .note-editor [style*="background-color:#bae6fd"],
+[data-theme="dark"] .note-editor [style*="background-color: #bae6fd"] {
+  background-color: rgba(56, 189, 248, 0.28) !important;
+  color: #e0f2fe !important;
+}
+
+/* Orange highlight → warm orange dim */
+[data-theme="dark"] .note-editor span[style*="background-color: rgb(254, 215, 170)"],
+[data-theme="dark"] .note-editor span[style*="background-color: rgb(254,215,170)"],
+[data-theme="dark"] .note-editor [style*="background-color: rgb(254, 215, 170)"],
+[data-theme="dark"] .note-editor [style*="background-color:#fed7aa"],
+[data-theme="dark"] .note-editor [style*="background-color: #fed7aa"] {
+  background-color: rgba(251, 146, 60, 0.32) !important;
+  color: #fed7aa !important;
+}
+
+/* Pink highlight → soft pink dim */
+[data-theme="dark"] .note-editor span[style*="background-color: rgb(251, 207, 232)"],
+[data-theme="dark"] .note-editor span[style*="background-color: rgb(251,207,232)"],
+[data-theme="dark"] .note-editor [style*="background-color: rgb(251, 207, 232)"],
+[data-theme="dark"] .note-editor [style*="background-color:#fbcfe8"],
+[data-theme="dark"] .note-editor [style*="background-color: #fbcfe8"] {
+  background-color: rgba(236, 72, 153, 0.3) !important;
+  color: #fce7f3 !important;
+}
+
+/* Purple highlight → muted purple dim */
+[data-theme="dark"] .note-editor span[style*="background-color: rgb(233, 213, 255)"],
+[data-theme="dark"] .note-editor span[style*="background-color: rgb(233,213,255)"],
+[data-theme="dark"] .note-editor [style*="background-color: rgb(233, 213, 255)"],
+[data-theme="dark"] .note-editor [style*="background-color:#e9d5ff"],
+[data-theme="dark"] .note-editor [style*="background-color: #e9d5ff"] {
+  background-color: rgba(168, 85, 247, 0.3) !important;
+  color: #ede9fe !important;
+}
+
+/* ==========================================================================
+   Find in Document Bar (IDE-style Ctrl+F)
+   ========================================================================== */
+
+.note-find-bar {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color-subtle);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  flex-shrink: 0;
+  z-index: 25;
+  animation: findBarSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.note-find-bar.open {
+  display: flex;
+}
+
+@keyframes findBarSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.note-find-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--accent-color);
+  flex-shrink: 0;
+}
+
+.note-find-input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border-color-subtle);
+  border-radius: var(--radius-sm);
+  outline: none;
+  background: var(--bg-input);
+  font-family: var(--font-main);
+  font-size: 12.5px;
+  color: var(--text-primary);
+  padding: 4px 8px;
+  height: 26px;
+  transition: border-color var(--trans-fast);
+}
+
+.note-find-input:focus {
+  border-color: var(--accent-color);
+}
+
+.note-find-input::placeholder {
+  color: var(--text-muted);
+}
+
+.note-find-count {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 32px;
+  text-align: center;
+  user-select: none;
+}
+
+.note-find-count.has-results {
+  color: var(--accent-color);
+}
+
+.note-find-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 11px;
+  transition: all var(--trans-fast);
+  flex-shrink: 0;
+}
+
+.note-find-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-color-subtle);
+}
+
+.note-find-btn:active {
+  transform: scale(0.92);
+}
+
+.note-find-btn.find-close-btn:hover {
+  background: rgba(244, 63, 94, 0.15);
+  color: #f43f5e;
+  border-color: rgba(244, 63, 94, 0.3);
+}
+
+/* Find Highlight Marks in Editor */
+.note-editor mark.note-find-highlight {
+  background: rgba(245, 158, 11, 0.25);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.3);
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.note-editor mark.note-find-highlight.active {
+  background: rgba(245, 158, 11, 0.55);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.6), 0 0 8px rgba(245, 158, 11, 0.3);
+}
+
+/* Dark mode adjustments for find highlights */
+[data-theme="dark"] .note-editor mark.note-find-highlight {
+  background: rgba(251, 191, 36, 0.2);
+  color: inherit !important;
+  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.35);
+}
+
+[data-theme="dark"] .note-editor mark.note-find-highlight.active {
+  background: rgba(251, 191, 36, 0.45);
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.6), 0 0 10px rgba(251, 191, 36, 0.25);
+}

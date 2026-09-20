@@ -9,6 +9,7 @@ import { TodoManager } from './todo.js';
 import { DragDropManager } from './dragdrop.js';
 import { SearchManager } from './search.js';
 import { ThemeManager } from './theme.js';
+import { NoteManager } from './note.js';
 
 export function showToast(message, type = 'info') {
   const toast = document.getElementById('app-toast');
@@ -42,6 +43,7 @@ class TodoLiteApp {
     this.dragDropManager = null;
     this.searchManager = null;
     this.themeManager = null;
+    this.noteManager = null;
 
     this.init();
   }
@@ -53,6 +55,10 @@ class TodoLiteApp {
     this.todoManager = new TodoManager();
     this.dragDropManager = new DragDropManager();
     this.searchManager = new SearchManager();
+    this.noteManager = new NoteManager();
+
+    // Wire up cross-references between managers
+    this.searchManager.noteManager = this.noteManager;
 
     // 2. Setup Window Control & Pin Actions
     this.setupWindowControls();
@@ -61,7 +67,16 @@ class TodoLiteApp {
     this.setupGuideModal();
 
     // 3. Load initial data from SQLite / Bridge
-    await this.tabManager.loadInitialData();
+    await Promise.all([
+      this.tabManager.loadInitialData(),
+      this.noteManager.loadInitialData()
+    ]);
+
+    // If starting in note mode, load active note tab content
+    if (store.getState().viewMode === 'note') {
+      this.noteManager.updateCurrentTabLabel();
+      this.noteManager.loadActiveNote();
+    }
 
     // 4. Check initial Pin state
     this.updatePinVisuals(store.getState().isPinned);

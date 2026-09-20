@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="css/search.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/minimalist.css">
+  <link rel="stylesheet" href="css/note.css">
 </head>
 <body>
   <main id="app-window" class="is-pinned">
@@ -41,6 +42,7 @@
           </svg>
         </button>
         <button id="btn-toggle-style" class="app-badge" title="Đổi phong cách: Glassmorphism / Minimalist" aria-label="Đổi phong cách giao diện">Glass</button>
+        <button id="btn-toggle-mode" class="app-badge mode-badge" title="Chuyển chế độ: Danh sách việc (List) ↔ Ghi chú (Note)" aria-label="Chuyển chế độ ghi chú hoặc checklist">Note</button>
       </div>
 
       <div class="titlebar-actions">
@@ -76,11 +78,25 @@
     </header>
 
     <!-- 2. Tab Navigation (Windows Explorer / Chrome Style) -->
-    <nav class="tab-navigation" aria-label="Danh sách tab">
+    <!-- Checklist Tab Navigation -->
+    <nav id="checklist-tab-nav" class="tab-navigation" aria-label="Danh sách tab công việc">
       <div id="tabs-list" class="tabs-list">
         <!-- Dynamically populated tabs -->
       </div>
       <button id="btn-add-tab" class="tab-add-btn" title="Thêm tab mới" aria-label="Thêm tab">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+    </nav>
+
+    <!-- Note Tab Navigation -->
+    <nav id="note-tab-nav" class="tab-navigation note-tab-navigation" aria-label="Danh sách tab ghi chú">
+      <div id="note-tabs-list" class="tabs-list">
+        <!-- Dynamically populated note tabs -->
+      </div>
+      <button id="btn-add-note-tab" class="tab-add-btn note-tab-add-btn" title="Thêm tab ghi chú mới" aria-label="Thêm tab ghi chú">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -121,6 +137,199 @@
           </div>
           <div class="empty-state-title">Chưa có công việc nào!</div>
           <p class="empty-state-subtitle">Nhập việc cần làm vào ô bên dưới rồi nhấn Enter để bắt đầu ngày làm việc hiệu quả ✨</p>
+        </div>
+      </div>
+
+      <!-- TakeNote Editor Area -->
+      <div id="note-editor-area" class="note-editor-area" style="display: none;">
+        <!-- Rich Formatting Toolbar -->
+        <div class="note-toolbar" id="note-toolbar">
+          <!-- Text Styling Group -->
+          <div class="toolbar-group">
+            <button type="button" class="note-tool-btn" data-command="bold" title="In đậm (Ctrl+B)">
+              <strong>B</strong>
+            </button>
+            <button type="button" class="note-tool-btn" data-command="italic" title="In nghiêng (Ctrl+I)">
+              <em>I</em>
+            </button>
+            <button type="button" class="note-tool-btn" data-command="underline" title="Gạch chân (Ctrl+U)">
+              <u>U</u>
+            </button>
+            <button type="button" class="note-tool-btn" data-command="strikeThrough" title="Gạch ngang">
+              <s>S</s>
+            </button>
+          </div>
+
+          <div class="toolbar-divider"></div>
+
+          <!-- Headings & Font Size -->
+          <div class="toolbar-group">
+            <select id="note-heading-select" class="note-select" title="Định dạng tiêu đề">
+              <option value="p">Văn bản</option>
+              <option value="h1">Tiêu đề 1</option>
+              <option value="h2">Tiêu đề 2</option>
+              <option value="h3">Tiêu đề 3</option>
+            </select>
+            <select id="note-size-select" class="note-select" title="Cỡ chữ">
+              <option value="3">Cỡ vừa</option>
+              <option value="2">Cỡ nhỏ</option>
+              <option value="4">Cỡ lớn</option>
+              <option value="5">Cỡ rất lớn</option>
+            </select>
+          </div>
+
+          <div class="toolbar-divider"></div>
+
+          <!-- Color & Highlight Popovers -->
+          <div class="toolbar-group">
+            <!-- Text Color Button with Popover -->
+            <div class="popover-wrapper">
+              <button type="button" id="btn-note-color" class="note-tool-btn" title="Màu chữ">
+                <span class="color-indicator-char">A</span>
+                <span id="text-color-bar" class="color-bar"></span>
+              </button>
+              <div id="text-color-popover" class="note-popover color-palette">
+                <div class="palette-title">Màu chữ</div>
+                <div class="palette-grid">
+                  <button type="button" class="palette-swatch" data-color="inherit" style="background: var(--text-primary);" title="Mặc định"></button>
+                  <button type="button" class="palette-swatch" data-color="#ef4444" style="background: #ef4444;" title="Đỏ"></button>
+                  <button type="button" class="palette-swatch" data-color="#f97316" style="background: #f97316;" title="Cam"></button>
+                  <button type="button" class="palette-swatch" data-color="#eab308" style="background: #eab308;" title="Vàng"></button>
+                  <button type="button" class="palette-swatch" data-color="#22c55e" style="background: #22c55e;" title="Xanh lá"></button>
+                  <button type="button" class="palette-swatch" data-color="#06b6d4" style="background: #06b6d4;" title="Xanh lơ"></button>
+                  <button type="button" class="palette-swatch" data-color="#3b82f6" style="background: #3b82f6;" title="Xanh dương"></button>
+                  <button type="button" class="palette-swatch" data-color="#a855f7" style="background: #a855f7;" title="Tím"></button>
+                  <button type="button" class="palette-swatch" data-color="#ec4899" style="background: #ec4899;" title="Hồng"></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Highlight Color Button with Popover -->
+            <div class="popover-wrapper">
+              <button type="button" id="btn-note-highlight" class="note-tool-btn" title="Bút dạ quang (Highlight)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 11-6 6v3h3l6-6"/>
+                  <path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/>
+                </svg>
+                <span id="highlight-color-bar" class="color-bar"></span>
+              </button>
+              <div id="highlight-color-popover" class="note-popover color-palette">
+                <div class="palette-title">Màu Highlight</div>
+                <div class="palette-grid">
+                  <button type="button" class="palette-swatch" data-highlight="#fef08a" style="background: #fef08a;" title="Vàng dạ quang"></button>
+                  <button type="button" class="palette-swatch" data-highlight="#bbf7d0" style="background: #bbf7d0;" title="Xanh lá pastel"></button>
+                  <button type="button" class="palette-swatch" data-highlight="#bae6fd" style="background: #bae6fd;" title="Xanh mây"></button>
+                  <button type="button" class="palette-swatch" data-highlight="#fed7aa" style="background: #fed7aa;" title="Cam đào"></button>
+                  <button type="button" class="palette-swatch" data-highlight="#fbcfe8" style="background: #fbcfe8;" title="Hồng phấn"></button>
+                  <button type="button" class="palette-swatch" data-highlight="#e9d5ff" style="background: #e9d5ff;" title="Tím nhạt"></button>
+                  <button type="button" class="palette-swatch clear-highlight" data-highlight="transparent" title="Xóa Highlight">✕</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="toolbar-divider"></div>
+
+          <!-- Lists & Insert Items -->
+          <div class="toolbar-group">
+            <button type="button" class="note-tool-btn" data-command="insertUnorderedList" title="Danh sách gạch đầu dòng">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                <line x1="9" y1="6" x2="20" y2="6"></line>
+                <line x1="9" y1="12" x2="20" y2="12"></line>
+                <line x1="9" y1="18" x2="20" y2="18"></line>
+                <circle cx="4" cy="6" r="1.5" fill="currentColor"></circle>
+                <circle cx="4" cy="12" r="1.5" fill="currentColor"></circle>
+                <circle cx="4" cy="18" r="1.5" fill="currentColor"></circle>
+              </svg>
+            </button>
+            <button type="button" class="note-tool-btn" data-command="insertOrderedList" title="Danh sách số thứ tự">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                <line x1="10" y1="6" x2="20" y2="6"></line>
+                <line x1="10" y1="12" x2="20" y2="12"></line>
+                <line x1="10" y1="18" x2="20" y2="18"></line>
+                <circle cx="4" cy="6" r="1" fill="currentColor"></circle>
+                <circle cx="4" cy="12" r="1" fill="currentColor"></circle>
+                <circle cx="4" cy="18" r="1" fill="currentColor"></circle>
+              </svg>
+            </button>
+
+            <!-- Emoji Picker Popover -->
+            <div class="popover-wrapper">
+              <button type="button" id="btn-note-emoji" class="note-tool-btn" title="Chèn biểu tượng cảm xúc / Icon">
+                😀
+              </button>
+              <div id="emoji-popover" class="note-popover emoji-palette">
+                <div class="palette-title">Biểu tượng & Icon</div>
+                <div class="emoji-grid" id="emoji-grid">
+                  <!-- Injected via JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Horizontal divider -->
+            <button type="button" class="note-tool-btn" id="btn-note-hr" title="Đường kẻ phân cách">
+              ―
+            </button>
+
+            <!-- Clear formatting -->
+            <button type="button" class="note-tool-btn" data-command="removeFormat" title="Xóa toàn bộ định dạng">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+                <line x1="18" y1="19" x2="23" y2="14" stroke="#ef4444" stroke-width="2.2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Note ContentEditable Scroll Area -->
+        <!-- Find in Document Bar (IDE-style Ctrl+F for Note) -->
+        <div id="note-find-bar" class="note-find-bar">
+          <svg class="note-find-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="note-find-input" class="note-find-input" placeholder="Tìm trong ghi chú..." autocomplete="off" spellcheck="false">
+          <span id="note-find-count" class="note-find-count"></span>
+          <button type="button" id="note-find-prev" class="note-find-btn" title="Kết quả trước (Shift+Enter)">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+          </button>
+          <button type="button" id="note-find-next" class="note-find-btn" title="Kết quả tiếp (Enter)">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <button type="button" id="note-find-close" class="note-find-btn find-close-btn" title="Đóng tìm kiếm (Esc)">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="note-editor-wrapper">
+          <div 
+            id="note-editor" 
+            class="note-editor" 
+            contenteditable="true" 
+            spellcheck="false" 
+            data-placeholder="Bắt đầu viết ghi chú tại đây... (Hỗ trợ gõ tiếng Việt, in đậm, đổi màu, highlight, chèn icon)"
+          ></div>
+        </div>
+
+        <!-- Note Status Bar -->
+        <div class="note-statusbar">
+          <div class="note-status-info">
+            <span id="note-word-count">0 từ</span>
+            <span class="status-dot">•</span>
+            <span id="note-char-count">0 ký tự</span>
+          </div>
+          <div class="note-sync-indicator" id="note-sync-indicator">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span id="note-sync-text">Đã lưu tự động</span>
+          </div>
         </div>
       </div>
 
@@ -293,10 +502,10 @@
               📑 1. Quản lý Tab (Sổ tay chuyên mục)
             </div>
             <ul class="guide-section-list">
-              <li>• <strong>Thêm tab mới:</strong> Bấm nút <span class="guide-kbd">+</span> trên thanh tab.</li>
+              <li>• <strong>Thêm tab mới:</strong> Bấm nút <span class="guide-kbd">+</span> trên thanh tab (tối đa 4 tab độc lập cho mỗi chế độ).</li>
               <li>• <strong>Đổi tên tab:</strong> Nhấp đúp chuột (<span class="guide-kbd">Double Click</span>) vào tên tab, gõ tên mới rồi bấm <span class="guide-kbd">Enter</span>.</li>
-              <li>• <strong>Đóng tab:</strong> Rê chuột vào tab và bấm nút <span class="guide-kbd">×</span> (khi có từ 2 tab trở lên).</li>
-              <li>• <strong>Bộ đếm:</strong> Số màu xám trên tab hiển thị số việc cần làm chưa hoàn thành.</li>
+              <li>• <strong>Đóng tab:</strong> Rê chuột vào tab và bấm nút <span class="guide-kbd">×</span> (khi có từ 2 tab trở lên, có hộp thoại xác nhận an toàn).</li>
+              <li>• <strong>Bộ đếm:</strong> Số màu xám trên tab hiển thị số việc cần làm chưa hoàn thành theo thời gian thực.</li>
             </ul>
           </div>
 
@@ -307,7 +516,7 @@
             </div>
             <ul class="guide-section-list">
               <li>• Nhấn giữ biểu tượng <span class="guide-kbd">⠿</span> (6 chấm) ở đầu mỗi task.</li>
-              <li>• Kéo lên hoặc kéo xuống đến vị trí mong muốn và thả chuột.</li>
+              <li>• Kéo lên hoặc kéo xuống đến vị trí mong muốn (vạch chỉ thị màu dạ quang định vị chính xác vị trí thả).</li>
               <li>• Thứ tự mới được cập nhật tức thời và lưu tự động vào cơ sở dữ liệu SQLite.</li>
             </ul>
           </div>
@@ -318,9 +527,9 @@
               ✍️ 3. Thêm & Chỉnh Sửa Công Việc
             </div>
             <ul class="guide-section-list">
-              <li>• <strong>Thêm mới:</strong> Nhập vào ô cuối cửa sổ, bấm <span class="guide-kbd">Enter</span> hoặc nút <span class="guide-kbd">+</span> vàng cam.</li>
+              <li>• <strong>Thêm mới:</strong> Nhập vào ô cuối cửa sổ (tối đa 200 chữ có bộ đếm), bấm <span class="guide-kbd">Enter</span> hoặc nút <span class="guide-kbd">+</span> vàng cam.</li>
               <li>• <strong>Sửa nội dung:</strong> Nhấp đúp chuột trực tiếp vào dòng chữ của task để sửa nhanh inline.</li>
-              <li>• <strong>Hoàn thành:</strong> Tích vào ô vuông bên trái task (dòng chữ sẽ gạch ngang).</li>
+              <li>• <strong>Hoàn thành:</strong> Tích vào ô vuông bên trái task (dòng chữ sẽ gạch ngang và mờ dịu mắt).</li>
               <li>• <strong>Xóa task:</strong> Rê chuột vào task và bấm icon thùng rác màu đỏ.</li>
             </ul>
           </div>
@@ -333,7 +542,7 @@
             <ul class="guide-section-list">
               <li>• <strong>Mức ưu tiên:</strong> Bấm nút chấm tròn để xoay vòng: Xám (None) ➔ Xanh (Low) ➔ Vàng (Medium) ➔ Đỏ (High).</li>
               <li>• <strong>Hạn chót & Giờ cụ thể:</strong> Bấm icon <span class="guide-kbd">📅</span> Lịch để chọn mốc nhanh (Hôm nay 18h, Tối nay 21h, Ngày mai, Cuối tuần...) hoặc ngày & giờ chi tiết.</li>
-              <li>• <strong>Báo lỗi thông minh:</strong> Hệ thống tự động kiểm tra và báo lỗi đỏ nếu bạn nhập mốc thời gian sai hoặc đã qua.</li>
+              <li>• <strong>Cảnh báo trực quan:</strong> Hệ thống tự động báo đỏ nếu quá hạn, vàng nếu đến hạn hôm nay, và ngăn chặn chọn thời gian đã qua.</li>
             </ul>
           </div>
 
@@ -344,19 +553,36 @@
             </div>
             <ul class="guide-section-list">
               <li>• Bấm icon kính lúp hoặc gõ phím tắt <span class="guide-kbd">Ctrl + F</span> để mở tìm kiếm.</li>
-              <li>• Kết quả tìm kiếm hiển thị tức thì trên tất cả các tab kèm nhóm chuyên mục rõ ràng. Nhấp vào kết quả để chuyển ngay đến task đó.</li>
+              <li>• <strong>Ở chế độ Checklist:</strong> Tìm kiếm tức thì trên tất cả các tab theo nhóm chuyên mục rõ ràng. Nhấp vào kết quả để chuyển và cuộn ngay đến task đó.</li>
+              <li>• <strong>Ở chế độ TakeNote:</strong> Mở thanh tìm kiếm trong tài liệu (Find in Document) có đếm số kết quả, phím tắt <span class="guide-kbd">Enter</span> (Tiếp) và <span class="guide-kbd">Shift+Enter</span> (Trước).</li>
             </ul>
           </div>
 
           <!-- 6. Pin & Theme & Data -->
           <div class="guide-section">
             <div class="guide-section-header">
-              📌 6. Luôn Nổi Trên Cùng & Lưu Trữ Bền Vững
+              📌 6. Luôn Nổi Trên Cùng, Giao Diện & Khay Hệ Thống
             </div>
             <ul class="guide-section-list">
               <li>• <strong>Nút Ghim (Đỏ):</strong> Giúp cửa sổ TodoLite luôn nổi trên mọi ứng dụng khác (Always on Top).</li>
-              <li>• <strong>Đổi Theme:</strong> Bấm biểu tượng Mặt trời / Mặt trăng để đổi giao diện Sáng / Tối.</li>
-              <li>• <strong>Lưu trữ dữ liệu:</strong> Toàn bộ task và tab được lưu trữ tự động vào cơ sở dữ liệu SQLite cục bộ trên máy, hoàn toàn an tâm tắt mở app không bao giờ lo mất dữ liệu.</li>
+              <li>• <strong>Đổi Theme:</strong> Bấm biểu tượng Mặt trời / Mặt trăng để đổi giao diện Sáng (Warm Paper) / Tối (Obsidian Dark).</li>
+              <li>• <strong>Đổi Phong cách:</strong> Bấm nút <span class="guide-kbd">Glass / Minimal</span> trên thanh tiêu đề để chuyển đổi giữa hiệu ứng kính mờ lung linh và phong cách tối giản thanh lịch.</li>
+              <li>• <strong>Khay hệ thống (System Tray):</strong> Thu nhỏ hoặc đóng sẽ ẩn app xuống khay taskbar. Nhấp vào icon để hiện nhanh, chuột phải để Ghim hoặc Thoát hoàn toàn.</li>
+              <li>• <strong>Lưu trữ dữ liệu:</strong> Toàn bộ task, tab và ghi chú được lưu trữ tự động vào cơ sở dữ liệu SQLite cục bộ trên máy, hoàn toàn an tâm không bao giờ lo mất dữ liệu.</li>
+            </ul>
+          </div>
+
+          <!-- 7. TakeNote -->
+          <div class="guide-section">
+            <div class="guide-section-header">
+              📝 7. Chế Độ Ghi Chú Thông Minh (TakeNote)
+            </div>
+            <ul class="guide-section-list">
+              <li>• <strong>Chuyển chế độ:</strong> Bấm nút <span class="guide-kbd">Note / List</span> ở góc trên cùng để đổi giữa Danh sách việc và Sổ tay ghi chú.</li>
+              <li>• <strong>Hệ thống Tab độc lập hoàn toàn:</strong> TakeNote có hệ thống Tab riêng biệt (tối đa 4 tab), thêm/xóa/sửa tab ở Note hoàn toàn không ảnh hưởng đến tab của CheckList.</li>
+              <li>• <strong>Soạn thảo phong phú:</strong> Hỗ trợ gõ tiếng Việt hoàn hảo, in đậm (Ctrl+B), in nghiêng (Ctrl+I), gạch chân (Ctrl+U), gạch ngang, đổi màu chữ, tô highlight dạ quang, đổi cỡ chữ, định dạng tiêu đề, chèn emoji và đường phân cách.</li>
+              <li>• <strong>Tìm kiếm thông minh:</strong> Nhấn <span class="guide-kbd">Ctrl + F</span> để mở thanh tìm kiếm inline với vạch sáng màu vàng nổi bật và bộ đếm kết quả.</li>
+              <li>• <strong>Lưu tự động:</strong> Tự động lưu mọi thay đổi sau khi ngừng gõ 0.5s kèm bộ đếm số từ và ký tự realtime.</li>
             </ul>
           </div>
         </div>
@@ -367,7 +593,7 @@
       </div>
     </div>
 
-    <!-- 7. Tab Close Confirmation Modal -->
+    <!-- 7. Tab Close Confirmation Modal (Checklist) -->
     <div id="tab-confirm-modal-backdrop" class="confirm-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
       <div class="confirm-modal">
         <div class="confirm-modal-icon-badge">
@@ -379,7 +605,7 @@
         </div>
         <h3 id="confirm-modal-title" class="confirm-modal-title">Xác nhận đóng tab</h3>
         <p class="confirm-modal-message">
-          Bạn có chắc đóng không, đóng lại thì bị xóa hết
+          Bạn có chắc đóng không, đóng lại thì bị xóa hết việc trong tab này
         </p>
         <div class="confirm-modal-tab-preview">
           Đang đóng tab: <strong id="confirm-tab-name">...</strong>
@@ -387,6 +613,30 @@
         <div class="confirm-modal-actions">
           <button id="btn-cancel-close-tab" class="btn-confirm-cancel">Hủy</button>
           <button id="btn-confirm-close-tab" class="btn-confirm-delete">Đồng ý đóng</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7b. Note Tab Close Confirmation Modal -->
+    <div id="note-tab-confirm-modal-backdrop" class="confirm-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="note-confirm-modal-title">
+      <div class="confirm-modal">
+        <div class="confirm-modal-icon-badge">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </div>
+        <h3 id="note-confirm-modal-title" class="confirm-modal-title">Xác nhận đóng tab ghi chú</h3>
+        <p class="confirm-modal-message">
+          Bạn có chắc đóng không, đóng lại thì nội dung ghi chú trong tab này sẽ bị xóa
+        </p>
+        <div class="confirm-modal-tab-preview">
+          Đang đóng tab: <strong id="note-confirm-tab-name">...</strong>
+        </div>
+        <div class="confirm-modal-actions">
+          <button id="btn-cancel-close-note-tab" class="btn-confirm-cancel">Hủy</button>
+          <button id="btn-confirm-close-note-tab" class="btn-confirm-delete">Đồng ý đóng</button>
         </div>
       </div>
     </div>

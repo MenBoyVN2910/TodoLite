@@ -4,7 +4,7 @@
 mod db;
 mod tray;
 
-use db::{DbState, ReorderItem, TabItem, TodoItem};
+use db::{DbState, NoteItem, ReorderItem, TabItem, TodoItem};
 use tauri::{Manager, State, WebviewWindow};
 
 // ----------------- TAB COMMANDS -----------------
@@ -76,6 +76,43 @@ fn reorder_todos(items: Vec<ReorderItem>, state: State<DbState>) -> Result<(), S
     state.reorder_todos(items).map_err(|e| e.to_string())
 }
 
+// ----------------- NOTE TAB COMMANDS -----------------
+#[tauri::command]
+fn get_all_note_tabs(state: State<DbState>) -> Result<Vec<TabItem>, String> {
+    state.get_all_note_tabs().map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn create_note_tab(name: String, state: State<DbState>) -> Result<TabItem, String> {
+    state.create_note_tab(name).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn update_note_tab(id: String, name: String, state: State<DbState>) -> Result<TabItem, String> {
+    state.update_note_tab(id, name).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn delete_note_tab(id: String, state: State<DbState>) -> Result<(), String> {
+    state.delete_note_tab(id).map_err(|e| e.to_string())
+}
+
+// ----------------- NOTE COMMANDS -----------------
+#[tauri::command]
+fn get_all_notes(state: State<DbState>) -> Result<Vec<NoteItem>, String> {
+    state.get_all_notes().map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn get_note_by_tab(tab_id: String, state: State<DbState>) -> Result<Option<NoteItem>, String> {
+    state.get_note_by_tab(tab_id).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn upsert_note(tab_id: String, content: String, state: State<DbState>) -> Result<NoteItem, String> {
+    state.upsert_note(tab_id, content).map_err(|e| e.to_string())
+}
+
 // ----------------- WINDOW ACTIONS -----------------
 #[tauri::command]
 fn set_always_on_top(always_on_top: bool, window: WebviewWindow) -> Result<(), String> {
@@ -127,6 +164,13 @@ fn main() {
             update_todo_deadline,
             delete_todo,
             reorder_todos,
+            get_all_note_tabs,
+            create_note_tab,
+            update_note_tab,
+            delete_note_tab,
+            get_all_notes,
+            get_note_by_tab,
+            upsert_note,
             set_always_on_top,
             minimize_window,
             hide_window,

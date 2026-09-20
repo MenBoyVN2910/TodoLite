@@ -4,8 +4,26 @@
  */
 
 const STORAGE_KEY_TABS = 'todolite_tabs_data';
+const STORAGE_KEY_NOTE_TABS = 'todolite_note_tabs_data';
 const STORAGE_KEY_TODOS = 'todolite_todos_data';
 const STORAGE_KEY_SETTINGS = 'todolite_settings_data';
+const STORAGE_KEY_NOTES = 'todolite_notes_data';
+
+// Initial default seed note tabs
+const DEFAULT_NOTE_TABS = [
+  { id: 'note-tab-1', name: 'Ghi chú 1', sort_order: 0, created_at: new Date().toISOString() },
+  { id: 'note-tab-2', name: 'Ý tưởng', sort_order: 1, created_at: new Date().toISOString() }
+];
+
+// Initial default seed notes
+const DEFAULT_NOTES = {
+  'note-tab-1': {
+    id: 'note-1',
+    tab_id: 'note-tab-1',
+    content: '<h2>Chào mừng bạn đến với TakeNote! ✨</h2><p>Đây là sổ tay ghi chú thông minh được tích hợp ngay trong TodoLite.</p><ul><li>Hỗ trợ gõ tiếng Việt có dấu chuẩn xác 🇻🇳</li><li>Có thể <strong>in đậm</strong>, <em>in nghiêng</em>, <u>gạch chân</u></li><li><mark style="background-color: #fef08a;">Highlight màu sắc</mark> để làm nổi bật ý quan trọng</li><li>Chèn biểu tượng cảm xúc 💡 🎯 🚀</li></ul><p>Thử ghi lại những suy nghĩ hay ghi chú công việc của bạn ngay tại đây nhé!</p>',
+    updated_at: new Date().toISOString()
+  }
+};
 
 // Initial default seed data for first launch
 const DEFAULT_TABS = [
@@ -78,6 +96,15 @@ export class Bridge {
       const val = args.always_on_top ?? args.alwaysOnTop ?? true;
       res.always_on_top = val;
       res.alwaysOnTop = val;
+    } else if (command === 'upsert_note') {
+      const tabId = args.tab_id || args.tabId;
+      res.tab_id = tabId;
+      res.tabId = tabId;
+      res.content = args.content ?? '';
+    } else if (command === 'get_note_by_tab') {
+      const tabId = args.tab_id || args.tabId;
+      res.tab_id = tabId;
+      res.tabId = tabId;
     }
     return res;
   }
@@ -173,6 +200,30 @@ export class Bridge {
       let todos = this.fallbackHandler('get_all_todos');
       todos = todos.filter(t => t.tab_id !== args.id);
       localStorage.setItem(STORAGE_KEY_TODOS, JSON.stringify(todos));
+    } else if (command === 'create_note_tab' && result) {
+      const noteTabs = this.fallbackHandler('get_all_note_tabs');
+      if (!noteTabs.some(t => t.id === result.id)) {
+        noteTabs.push(result);
+        localStorage.setItem(STORAGE_KEY_NOTE_TABS, JSON.stringify(noteTabs));
+      }
+    } else if (command === 'update_note_tab' && result) {
+      const noteTabs = this.fallbackHandler('get_all_note_tabs');
+      const idx = noteTabs.findIndex(t => t.id === result.id);
+      if (idx !== -1) {
+        noteTabs[idx] = result;
+        localStorage.setItem(STORAGE_KEY_NOTE_TABS, JSON.stringify(noteTabs));
+      }
+    } else if (command === 'delete_note_tab') {
+      let noteTabs = this.fallbackHandler('get_all_note_tabs');
+      noteTabs = noteTabs.filter(t => t.id !== args.id);
+      localStorage.setItem(STORAGE_KEY_NOTE_TABS, JSON.stringify(noteTabs));
+      let notes = this.fallbackHandler('get_all_notes_internal');
+      delete notes[args.id];
+      localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(notes));
+    } else if (command === 'upsert_note' && result) {
+      let notes = this.fallbackHandler('get_all_notes_internal');
+      notes[result.tab_id] = result;
+      localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(notes));
     }
   }
 
@@ -374,6 +425,93 @@ export class Bridge {
       case 'hide_window': {
         console.log('Window hidden to tray (simulation in browser)');
         return true;
+      }
+
+      case 'get_all_note_tabs': {
+        const raw = localStorage.getItem(STORAGE_KEY_NOTE_TABS);
+        if (!raw) {
+          localStorage.setItem(STORAGE_KEY_NOTE_TABS, JSON.stringify(DEFAULT_NOTE_TABS));
+          return [...DEFAULT_NOTE_TABS];
+        }
+        try {
+          return JSON.parse(raw);
+        } catch {
+          return [...DEFAULT_NOTE_TABS];
+        }
+      }
+
+      case 'create_note_tab': {
+        const tabs = this.fallbackHandler('get_all_note_tabs');
+        const newTab = {
+          id: 'note-tab-' + Date.now(),
+          name: args.name || 'Ghi chú mới',
+          sort_order: tabs.length,
+          created_at: new Date().toISOString()
+        };
+        tabs.push(newTab);
+        localStorage.setItem(STORAGE_KEY_NOTE_TABS, JSON.stringify(tabs));
+        return newTab;
+      }
+
+      case 'update_note_tab': {
+        const tabs = this.fallbackHandler('get_all_note_tabs');
+        const index = tabs.findIndex(t => t.id === args.id);
+        if (index !== -1) {
+          tabs[index] = { ...tabs[index], ...args };
+          localStorage.setItem(STORAGE_KEY_NOTE_TABS, JSON.stringify(tabs));
+          return tabs[index];
+        }
+        throw new Error('Note tab not found');
+      }
+
+      case 'delete_note_tab': {
+        let tabs = this.fallbackHandler('get_all_note_tabs');
+        tabs = tabs.filter(t => t.id !== args.id);
+        localStorage.setItem(STORAGE_KEY_NOTE_TABS, JSON.stringify(tabs));
+        let notes = this.fallbackHandler('get_all_notes_internal');
+        delete notes[args.id];
+        localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(notes));
+        return true;
+      }
+
+      case 'get_all_notes_internal': {
+        const raw = localStorage.getItem(STORAGE_KEY_NOTES);
+        if (!raw) {
+          localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(DEFAULT_NOTES));
+          return { ...DEFAULT_NOTES };
+        }
+        try {
+          return JSON.parse(raw);
+        } catch {
+          return {};
+        }
+      }
+
+      case 'get_all_notes': {
+        const notesObj = this.fallbackHandler('get_all_notes_internal');
+        return Object.values(notesObj);
+      }
+
+      case 'get_note_by_tab': {
+        const notes = this.fallbackHandler('get_all_notes_internal');
+        const tabId = args.tab_id || args.tabId;
+        return notes[tabId] || null;
+      }
+
+      case 'upsert_note': {
+        const notes = this.fallbackHandler('get_all_notes_internal');
+        const tabId = args.tab_id || args.tabId;
+        const now = new Date().toISOString();
+        const existing = notes[tabId];
+        const note = {
+          id: existing?.id || 'note-' + Date.now(),
+          tab_id: tabId,
+          content: args.content ?? '',
+          updated_at: now
+        };
+        notes[tabId] = note;
+        localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(notes));
+        return note;
       }
 
       default:
